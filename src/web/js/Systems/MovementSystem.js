@@ -48,13 +48,13 @@ export default class MovementSystem extends System {
           if (sprite.X + sprite.Width > borders.right) {
             // Goal Left player
             singleton.LeftScore += 1;
-            //singleton.GameState = GameStates.GameOver;
+            singleton.GameState = GameStates.Goal;
             verticalVelocity *= -1;
           }
           if (sprite.X < borders.left) {
             // Goal Right player
             singleton.RightScore += 1;
-            //singleton.GameState = GameStates.GameOver;
+            singleton.GameState = GameStates.Goal;
             verticalVelocity *= -1;
           }
           if (sprite.Y < borders.top) {

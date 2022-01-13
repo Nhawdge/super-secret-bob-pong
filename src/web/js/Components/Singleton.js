@@ -5,6 +5,7 @@ export const GameStates = {
   Game: "Game",
   GameOver: "GameOver",
   Paused: "Paused",
+  Goal: "Goal",
 };
 
 export default class Singleton extends Component {
