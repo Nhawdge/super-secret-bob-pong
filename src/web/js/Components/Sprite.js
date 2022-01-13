@@ -17,5 +17,8 @@ export default class Sprite extends Component {
     this.Y = 0;
     this.Width = 0;
     this.Height = 0;
+
+    this.CenterX = () => this.X + (this.Width / 2);
+    this.CenterY = () => this.Y + (this.Height / 2);
   }
 }

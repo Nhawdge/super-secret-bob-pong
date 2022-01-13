@@ -4,6 +4,7 @@ import Controllable from "../Components/Controllable.js";
 import Render from "../Components/Render.js";
 import Sprite from "../Components/Sprite.js";
 import System from "./System.js";
+import Singleton, { GameStates } from "../Components/Singleton.js";
 
 export default class MovementSystem extends System {
   constructor(engine) {
@@ -14,79 +15,76 @@ export default class MovementSystem extends System {
   }
 
   UpdateAll(entities) {
-    var borders = {
-      top: 0,
-      bottom: this.engine.canvas.height,
-      left: 0,
-      right: this.engine.canvas.width,
-    };
+    var singletonEntity = entities.find((x) => x.GetComponentOfType(Singleton));
+    var singleton = singletonEntity.GetComponentOfType(Singleton);
 
-    entities.forEach((entity) => {
-      var control = entity.GetComponentOfType(Controllable);
-      var render = entity.GetComponentOfType(Render);
-      if (control && render) {
-        if (this.KeysPressed.has(control.Up)) {
-          render.Y -= control.Speed;
-        }
-        if (this.KeysPressed.has(control.Down)) {
-          render.Y += control.Speed;
-        }
-      }
+    if (singleton.GameState == GameStates.Game) {
+      var borders = {
+        top: 0,
+        bottom: this.engine.canvas.height,
+        left: 0,
+        right: this.engine.canvas.width,
+      };
 
-      var ballAi = entity.GetComponentOfType(BallAI);
-      if (ballAi) {
-        var sprite = entity.GetComponentOfType(Sprite);
-
-        var verticalVelocity =
-          Math.sin((ballAi.Direction * Math.PI) / 180) * ballAi.Speed;
-        var horizontalVelocity =
-          Math.cos((ballAi.Direction * Math.PI) / 180) * ballAi.Speed;
-
-        if (sprite.X + sprite.Width / 2 > borders.right) {
-          verticalVelocity *= -1;
-          console.log("too far right", sprite);
+      entities.forEach((entity) => {
+        var control = entity.GetComponentOfType(Controllable);
+        var render = entity.GetComponentOfType(Render);
+        if (control && render) {
+          if (this.KeysPressed.has(control.Up)) {
+            render.Y -= control.Speed;
+          }
+          if (this.KeysPressed.has(control.Down)) {
+            render.Y += control.Speed;
+          }
         }
 
-        if (sprite.X < borders.left) {
-          verticalVelocity *= -1;
-          console.log("too far left");
+        var ballAi = entity.GetComponentOfType(BallAI);
+        if (ballAi) {
+          var sprite = entity.GetComponentOfType(Sprite);
+
+          var verticalVelocity = Math.sin((ballAi.Direction * Math.PI) / 180) * ballAi.Speed;
+          var horizontalVelocity = Math.cos((ballAi.Direction * Math.PI) / 180) * ballAi.Speed;
+
+          if (sprite.X + sprite.Width / 2 > borders.right) {
+            verticalVelocity *= -1;
+            // Goal Left player
+          }
+          if (sprite.X < borders.left) {
+            verticalVelocity *= -1;
+            // Goal Right player
+          }
+          if (sprite.Y < borders.top) {
+            horizontalVelocity *= -1;
+            singleton.PlaySound = "pong";
+          }
+          if (sprite.Y + sprite.Height > borders.bottom) {
+            horizontalVelocity *= -1;
+            singleton.PlaySound = "pong";
+          }
+          var newDirection = (Math.atan2(verticalVelocity, horizontalVelocity) * 180) / Math.PI;
+          ballAi.Direction = newDirection;
+
+          sprite.X += verticalVelocity;
+          sprite.Y += horizontalVelocity;
         }
 
-        if (sprite.Y < borders.top) {
-          horizontalVelocity *= -1;
-          console.log("too far up");
+        var paddleAi = entity.GetComponentOfType(PaddleAI);
+        if (paddleAi) {
+          var ball = entities.find((e) => e.GetComponentOfType(BallAI));
+          var ballRender = ball.GetComponentOfType(Sprite);
+          var myRender = entity.GetComponentOfType(Render);
+
+          if (myRender.Y > ballRender.Y) {
+            myRender.Y -= paddleAi.Speed;
+          }
+          if (myRender.Y < ballRender.Y) {
+            myRender.Y += paddleAi.Speed;
+          }
         }
-
-        if (sprite.Y + sprite.Height / 2 > borders.bottom) {
-          horizontalVelocity *= -1;
-          console.log("too far down");
-        }
-
-        var newDirection =
-          (Math.atan2(verticalVelocity, horizontalVelocity) * 180) / Math.PI;
-        ballAi.Direction = newDirection;
-
-        sprite.X += verticalVelocity;
-        sprite.Y += horizontalVelocity;
-      }
-
-      var paddleAi = entity.GetComponentOfType(PaddleAI);
-      if (paddleAi) {
-        var ball = entities.find((e) => e.GetComponentOfType(BallAI));
-        var ballRender = ball.GetComponentOfType(Sprite);
-        var myRender = entity.GetComponentOfType(Render);
-
-        if (myRender.Y > ballRender.Y) {
-          myRender.Y -= paddleAi.Speed;
-        }
-        if (myRender.Y < ballRender.Y) {
-          myRender.Y += paddleAi.Speed;
-        }
-      }
-    });
-    //this.KeysPressed = new Set();
+      });
+      //this.KeysPressed = new Set();
+    }
   }
-
   keyDown(event) {
     this.KeysPressed.add(event.keyCode);
   }

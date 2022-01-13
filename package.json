@@ -1,12 +1,13 @@
 {
-  "name": "john.spacefight",
+  "name": "john.bobpong",
   "version": "1.0.0",
   "description": "",
   "main": "nodeserver.js",
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node src/server/server.js"
+    "start": "node src/server/server.js",
+    "dev": "nodemon src/server/server.js"
   },
   "author": "",
   "license": "ISC",

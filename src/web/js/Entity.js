@@ -20,6 +20,7 @@ export function BuildPlayerPaddle() {
   var paddle = new Entity();
   paddle.Components.push(new Render(20, 0, 20, 100, "black"));
   paddle.Components.push(new Controllable());
+  paddle.Components.push(new Score());
   return paddle;
 }
 
