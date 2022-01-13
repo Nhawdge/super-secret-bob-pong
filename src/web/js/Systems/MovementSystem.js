@@ -45,13 +45,17 @@ export default class MovementSystem extends System {
           var verticalVelocity = Math.sin((ballAi.Direction * Math.PI) / 180) * ballAi.Speed;
           var horizontalVelocity = Math.cos((ballAi.Direction * Math.PI) / 180) * ballAi.Speed;
 
-          if (sprite.X + sprite.Width / 2 > borders.right) {
-            verticalVelocity *= -1;
+          if (sprite.X + sprite.Width > borders.right) {
             // Goal Left player
+            singleton.LeftScore += 1;
+            //singleton.GameState = GameStates.GameOver;
+            verticalVelocity *= -1;
           }
           if (sprite.X < borders.left) {
-            verticalVelocity *= -1;
             // Goal Right player
+            singleton.RightScore += 1;
+            //singleton.GameState = GameStates.GameOver;
+            verticalVelocity *= -1;
           }
           if (sprite.Y < borders.top) {
             horizontalVelocity *= -1;

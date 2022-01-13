@@ -18,7 +18,7 @@ export default class Entity {
 
 export function BuildPlayerPaddle() {
   var paddle = new Entity();
-  paddle.Components.push(new Render(20, 0, 20, 100, "black"));
+  paddle.Components.push(new Render(20, 0, 20, 100, "blue"));
   paddle.Components.push(new Controllable());
   paddle.Components.push(new Score());
   return paddle;
@@ -27,7 +27,7 @@ export function BuildPlayerPaddle() {
 export function BuildAIPaddle() {
   var paddle = new Entity();
 
-  var render = new Render(0, 0, 20, 100, "black");
+  var render = new Render(0, 0, 20, 100, "red");
   render.X = document.querySelector("canvas").width - 30;
   render.Y = 10;
 

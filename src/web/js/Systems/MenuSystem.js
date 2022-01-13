@@ -14,6 +14,9 @@ export default class MenuSystem extends System {
     if (singleton.GameState === GameStates.Menu) {
       this.DrawButton("Click anywhere to start");
     }
+    if (singleton.GameState === GameStates.Game) {
+      this.Scoreboard(singleton);
+    }
   }
 
   DrawButton(message) {
@@ -36,5 +39,20 @@ export default class MenuSystem extends System {
       singleton.GameState = GameStates.Game;
       singleton.PlaySound = "wikakakakakawah";
     }
+  }
+
+  Scoreboard({ LeftScore, RightScore }) {
+    var ctx = this.engine.canvas.getContext("2d");
+
+    var x = 100;
+    var y = 100;
+    ctx.fillStyle = "blue";
+    ctx.stokeStyle = "blue";
+    ctx.font = "36px consolas";
+
+    ctx.fillText(LeftScore, this.engine.canvas.width / 4, 40);
+    ctx.fillStyle = "red";
+    ctx.stokeStyle = "red";
+    ctx.fillText(RightScore, (this.engine.canvas.width / 4) * 3, 40);
   }
 }

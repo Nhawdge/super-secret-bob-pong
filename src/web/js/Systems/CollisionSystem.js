@@ -13,51 +13,27 @@ export default class CollisionSystem extends System {
       var ball = entities.find((x) => x.GetComponentOfType(BallAI));
       var paddles = entities.filter((x) => x.GetComponentOfType(Render));
       paddles.forEach((paddle) => {
-        if (this.CheckCollision(ball.GetComponentOfType(Sprite), paddle.GetComponentOfType(Render))) {
-          var ballSprite = ball.GetComponentOfType(Sprite);
+        var ballSprite = ball.GetComponentOfType(Sprite);
+        var collidedPaddleRender = paddle.GetComponentOfType(Render);
+
+        if (this.CheckCollision(ballSprite, collidedPaddleRender)) {
           var ballAi = ball.GetComponentOfType(BallAI);
           singleton.PlaySound = "pong";
-          var collidedPaddleRender = paddle.GetComponentOfType(Render);
           var data = {
             ballcenterY: ballSprite.Y + ballSprite.Height / 2,
-            paddlecenterY: collidedPaddleRender.Y + collidedPaddleRender.Height / 2,
-
             ballcenterX: ballSprite.X + ballSprite.Width / 2,
+            paddlecenterY: collidedPaddleRender.Y + collidedPaddleRender.Height / 2,
           };
           data.y = data.ballcenterY - data.paddlecenterY;
           data.x = data.ballcenterX - collidedPaddleRender.X;
-          data.inradians = Math.atan2(data.y, data.x);
-          data.indegress = data.inradians * (180 / Math.PI);
+          data.inRadians = Math.atan2(data.y, data.x);
+          data.inDegrees = data.inRadians * ((180 / Math.PI) + 360) % 360;
 
-          ballAi.Direction = data.indegress;
-          console.log(data);
+          ballAi.Direction = data.inDegrees;
+          ballAi.Speed = Math.min(ballAi.Speed + 0.5, 10);
+          console.log(ballAi);
         }
       });
-
-      // var allBodies = entities.filter((x) => x.GetComponentOfType(Render) || x.GetComponentOfType(Sprite));
-      // entities.forEach((entity) => {
-      //   var myRender = entity.GetComponentOfType(Render);
-      //   if (myRender) {
-      //     allBodies.forEach((otherEntity) => {
-      //       if (entity.id == otherEntity.id) {
-      //         return;
-      //       }
-      //       var otherRender = otherEntity.GetComponentOfType(Render);
-      //       if (!otherRender) {
-      //         otherRender = otherEntity.GetComponentOfType(Sprite);
-      //       }
-      //       var areCollided = this.CheckCollision(myRender, otherRender);
-      //       if (areCollided) {
-      //         console.log(areCollided, myRender, otherRender);
-      //         var ballAi = otherEntity.GetComponentOfType(BallAI);
-
-      //         var verticalVelocity = Math.sin((ballAi.Direction * Math.PI) / 180) * ballAi.Speed;
-      //         var horizontalVelocity = Math.cos((ballAi.Direction * Math.PI) / 180) * ballAi.Speed;
-
-      //       }
-      //     });
-      //   }
-      // });
     }
   }
 

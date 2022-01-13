@@ -1,10 +1,10 @@
 import Component from "./Component.js";
 
 export const GameStates = {
-  Menu: 1,
-  Game: 2,
-  GameOver: 3,
-  Paused: 4,
+  Menu: "Menu",
+  Game: "Game",
+  GameOver: "GameOver",
+  Paused: "Paused",
 };
 
 export default class Singleton extends Component {
@@ -12,5 +12,7 @@ export default class Singleton extends Component {
     super(engine);
     this.PlaySound = false;
     this.GameState = GameStates.Menu;
+    this.LeftScore = 0;
+    this.RightScore = 0;
   }
 }
