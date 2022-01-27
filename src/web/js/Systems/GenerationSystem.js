@@ -24,14 +24,14 @@ export default class GenerationSystem extends System {
 
     if (singleton.GameState == GameStates.Goal) {
       this.IsResetting = true;
-      var ball = entities.findIndex((x) => x.GetComponentOfType(BallAI));
-      //this.engine.Entities.splice(ball, 1);
       if (this.IsResetting) {
+        var ball = entities.findIndex((x) => x.GetComponentOfType(BallAI));
+        this.engine.Entities.splice(ball, 1);
         this.IsResetting = false;
 
+        singleton.GameState = "Game";
         setTimeout(() => {
           this.engine.Entities.push(BuildBall());
-          singleton.GameState = "Game";
         }, 1000);
       }
     }

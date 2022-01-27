@@ -49,13 +49,13 @@ export default class MovementSystem extends System {
             // Goal Left player
             singleton.LeftScore += 1;
             singleton.GameState = GameStates.Goal;
-            verticalVelocity *= -1;
+            //verticalVelocity *= -1;
           }
           if (sprite.X < borders.left) {
             // Goal Right player
             singleton.RightScore += 1;
             singleton.GameState = GameStates.Goal;
-            verticalVelocity *= -1;
+            //verticalVelocity *= -1;
           }
           if (sprite.Y < borders.top) {
             horizontalVelocity *= -1;
@@ -73,8 +73,8 @@ export default class MovementSystem extends System {
         }
 
         var paddleAi = entity.GetComponentOfType(PaddleAI);
-        if (paddleAi) {
-          var ball = entities.find((e) => e.GetComponentOfType(BallAI));
+        var ball = entities.find((e) => e.GetComponentOfType(BallAI));
+        if (paddleAi && ball) {
           var ballRender = ball.GetComponentOfType(Sprite);
           var myRender = entity.GetComponentOfType(Render);
 

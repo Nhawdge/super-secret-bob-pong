@@ -13,6 +13,9 @@ export default class CollisionSystem extends System {
       var ball = entities.find((x) => x.GetComponentOfType(BallAI));
       var paddles = entities.filter((x) => x.GetComponentOfType(Render));
       paddles.forEach((paddle) => {
+        if (!ball) {
+          return;
+        }
         var ballSprite = ball.GetComponentOfType(Sprite);
         var collidedPaddleRender = paddle.GetComponentOfType(Render);
 
@@ -20,10 +23,10 @@ export default class CollisionSystem extends System {
           var ballAi = ball.GetComponentOfType(BallAI);
           singleton.PlaySound = "pong";
           var data = {
-            ballcenterY: ballSprite.Y + (ballSprite.Height / 2),
-            ballcenterX: ballSprite.X + (ballSprite.Width / 2),
-            paddlecenterY: collidedPaddleRender.Y + (collidedPaddleRender.Height / 2),
-            paddlecenterX: collidedPaddleRender.X + (collidedPaddleRender.Width / 2),
+            ballcenterY: ballSprite.Y + ballSprite.Height / 2,
+            ballcenterX: ballSprite.X + ballSprite.Width / 2,
+            paddlecenterY: collidedPaddleRender.Y + collidedPaddleRender.Height / 2,
+            paddlecenterX: collidedPaddleRender.X + collidedPaddleRender.Width / 2,
           };
           //data.y = data.ballcenterY - data.paddlecenterY;
           //data.x = data.ballcenterX - data.paddlecenterX;
@@ -32,11 +35,11 @@ export default class CollisionSystem extends System {
           data.x = ballSprite.X - collidedPaddleRender.X;
 
           data.inRadians = Math.atan2(data.y, data.x);
-          data.inDegrees = (data.inRadians * 180 / Math.PI + 360) % 360;
+          data.inDegrees = ((data.inRadians * 180) / Math.PI + 360) % 360;
 
           ballAi.Direction = data.inDegrees;
           ballAi.Speed = Math.min(ballAi.Speed + 0.5, 10);
-          console.log(ballAi);
+          console.log(ballAi); 
         }
       });
     }
