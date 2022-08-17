@@ -11,59 +11,68 @@ export default class CollisionSystem extends System {
 
     if (singleton.GameState === GameStates.Game) {
       var ball = entities.find((x) => x.GetComponentOfType(BallAI));
+      if (!ball) {
+        return;
+      }
+      var ballAi = ball.GetComponentOfType(BallAI);
+
       var paddles = entities.filter((x) => x.GetComponentOfType(Render));
+
+      var ballSprite = ball?.GetComponentOfType(Sprite);
+      var ctx = this.engine.canvas.getContext("2d");
+
       paddles.forEach((paddle) => {
         if (!ball) {
           return;
         }
-        var ballSprite = ball.GetComponentOfType(Sprite);
-        var collidedPaddleRender = paddle.GetComponentOfType(Render);
+        var paddleRender = paddle.GetComponentOfType(Render);
 
-        if (this.CheckCollision(ballSprite, collidedPaddleRender)) {
-          var ballAi = ball.GetComponentOfType(BallAI);
-          singleton.PlaySound = "pong";
-          var data = {
-            ballcenterY: ballSprite.Y + ballSprite.Height / 2,
-            ballcenterX: ballSprite.X + ballSprite.Width / 2,
-            paddlecenterY: collidedPaddleRender.Y + collidedPaddleRender.Height / 2,
-            paddlecenterX: collidedPaddleRender.X + collidedPaddleRender.Width / 2,
-          };
-          //data.y = data.ballcenterY - data.paddlecenterY;
-          //data.x = data.ballcenterX - data.paddlecenterX;
+        var ballPos = { X: ballSprite.X + ballSprite.Width / 2, Y: ballSprite.Y + ballSprite.Height / 2 };
+        var xMiddle = false;
+        var yMiddle = false;
+        var nearestPoint = { x: 0, y: 0 };
 
-          data.y = ballSprite.Y - collidedPaddleRender.Y;
-          data.x = ballSprite.X - collidedPaddleRender.X;
+        if (ballPos.X < paddleRender.X) {
+          nearestPoint.X = paddleRender.X;
+        } else if (ballPos.X > paddleRender.X + paddleRender.Width) {
+          nearestPoint.X = paddleRender.X + paddleRender.Width;
+        } else {
+          nearestPoint.X = ballPos.X;
+          xMiddle = true;
+        }
+        if (ballPos.Y < paddleRender.Y) {
+          nearestPoint.Y = paddleRender.Y;
+        } else if (ballPos.Y > paddleRender.Y + paddleRender.Height) {
+          nearestPoint.Y = paddleRender.Y + paddleRender.Height;
+        } else {
+          nearestPoint.Y = ballPos.Y;
+          yMiddle = true;
+        }
+        // ctx.arc(nearestPoint.X, nearestPoint.Y, 10, 0, Math.PI * 2);
+        // ctx.fillStyle = "black";
+        // ctx.fill();
 
-          data.inRadians = Math.atan2(data.y, data.x);
-          data.inDegrees = ((data.inRadians * 180) / Math.PI + 360) % 360;
+        // ctx.arc(ballPos.X, ballPos.Y, 10, 0, Math.PI * 2);
+        // ctx.fillStyle = "green";
+        // ctx.fill();
+        //if (xMiddle && yMiddle) {
+        var xDistance = Math.abs(ballPos.X - nearestPoint.X);
+        var yDistance = Math.abs(ballPos.Y - nearestPoint.Y);
+        var distanceDiff = xDistance + yDistance;
+        if (distanceDiff < 50) {
+          if (ballAi.BounceDelay <= 0) {
+            var directionMod = ballPos.X - nearestPoint.X > 0 ? 1 : -1;
+            //console.log(directionMod);
+            var currentDirection = ballAi.Direction;
+            var modifier = 360 - currentDirection;
 
-          ballAi.Direction = data.inDegrees;
-          ballAi.Speed = Math.min(ballAi.Speed + 0.5, 10);
-          console.log(ballAi); 
+            ballAi.Direction = modifier % 360;
+            singleton.PlaySound = "pong";
+            ballAi.BounceDelay = 100;
+          }
         }
       });
+      ballAi.BounceDelay--;
     }
-  }
-
-  CheckCollision(render1, render2) {
-    var RectA = {
-      left: render1.X,
-      right: render1.X + render1.Width,
-      top: render1.Y,
-      bottom: render1.Y + render1.Height,
-    };
-    var RectB = {
-      left: render2.X,
-      right: render2.X + render2.Width,
-      top: render2.Y,
-      bottom: render2.Y + render2.Height,
-    };
-
-    var leftCheck = RectA.left < RectB.right;
-    var rightCheck = RectA.right > RectB.left;
-    var topCheck = RectA.top < RectB.bottom;
-    var bottomCheck = RectA.bottom > RectB.top;
-
-    return leftCheck && rightCheck && topCheck && bottomCheck;
   }
 }

@@ -16,9 +16,9 @@ export default class RenderSystem extends System {
       entities.forEach((entity) => {
         var sprite = entity.GetComponentOfType(Sprite);
         if (sprite) {
-          ctx.beginPath();
-          ctx.rect(sprite.X, sprite.Y, sprite.Width, sprite.Height);
-          ctx.stroke();
+          // ctx.beginPath();
+          // ctx.rect(sprite.X, sprite.Y, sprite.Width, sprite.Height);
+          // ctx.stroke();
           ctx.drawImage(sprite.Image, sprite.X, sprite.Y, sprite.Width, sprite.Height);
         }
 

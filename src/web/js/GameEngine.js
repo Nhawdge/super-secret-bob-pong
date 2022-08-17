@@ -13,13 +13,13 @@ export default class GameEngine {
   }
 
   Start() {
+    this.Systems.push(new RenderSystem(this));
+    this.Systems.push(new MenuSystem(this));
     this.Systems.push(new GenerationSystem(this));
     this.Systems.push(new MovementSystem(this));
     this.Systems.push(new SoundSystem(this));
     this.Systems.push(new CollisionSystem(this));
 
-    this.Systems.push(new RenderSystem(this));
-    this.Systems.push(new MenuSystem(this));
     setInterval(() => {
       this.Update();
     }, 1000 / 60);
