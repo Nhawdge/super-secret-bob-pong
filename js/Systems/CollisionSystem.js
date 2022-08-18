@@ -61,14 +61,13 @@ export default class CollisionSystem extends System {
         var distanceDiff = xDistance + yDistance;
         if (distanceDiff < 50) {
           if (ballAi.BounceDelay <= 0) {
-            var directionMod = ballPos.X - nearestPoint.X > 0 ? 1 : -1;
-            //console.log(directionMod);
             var currentDirection = ballAi.Direction;
             var modifier = 360 - currentDirection;
 
             ballAi.Direction = modifier % 360;
             singleton.PlaySound = "pong";
             ballAi.BounceDelay = 100;
+            ballAi.Speed += 0.5;
           }
         }
       });
